@@ -13,7 +13,8 @@ RUN npm install
 COPY . /usr/src/app
 
 # Build and optimize react app
-# RUN npm run build
+RUN sudo chmod +x node_modules/.bin/react-scripts
+RUN sudo npm run build
 
 EXPOSE 9000
 
