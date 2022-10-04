@@ -1,33 +1,39 @@
-# Dockerfile
-FROM node:17.1.0 as build
-
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-
-ENV PATH usr/src/app/node_modules/.bin:$PATH
-
-# Install app dependencies
-COPY package.json /usr/src/app/
-COPY package-lock.json /usr/src/app/
+#
+# Build stage
+#
+FROM node:17.1.0-alpine as build
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
+#ENV REACT_APP_API_URL http://localhost:8080 
+COPY package.json ./
+COPY package-lock.json ./
 COPY nginx.conf ./
-
-RUN npm install react-scripts
-
-# Bundle app source
-COPY . /usr/src/app
-
-# Build and optimize react app
+RUN npm ci --silent
+RUN npm install react-scripts@3.4.1 -g --silent
+# CORS
+RUN npm install http-proxy-middleware
+RUN npm install cors
+COPY . ./
+#RUN sed -i "s|backend_host|$REACT_APP_API_URL|g" -i ./nginx.conf
 RUN npm run build
+
+#
+# Package stage
+#
+# production environment
+FROM nginx:stable-alpine
+
+ENV TZ Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY --from=build /app/build /usr/share/nginx/html
 COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
 
-ENV REACT_APP_API_URL http://rookie2:8080 
+ENV REACT_APP_API_URL http://backend:8080 
 RUN sed -i "s|backend_host|$REACT_APP_API_URL|g" -i /etc/nginx/conf.d/default.conf
 RUN cat /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
-# defined in package.json
 CMD ["nginx", "-g", "daemon off;"]
+kawhi-goat/rookie2_testDeploymentrookie2_testDeployment/Dockerfile at master · kawhi-goat/rookie2_testDeployment
