@@ -36,4 +36,3 @@ RUN cat /etc/nginx/conf.d/default.conf
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
-kawhi-goat/rookie2_testDeploymentrookie2_testDeployment/Dockerfile at master · kawhi-goat/rookie2_testDeployment
