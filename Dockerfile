@@ -1,5 +1,5 @@
 # Dockerfile
-FROM node:17.1.0
+FROM node:17.1.0-alpine
 
 # Create app directory
 RUN mkdir -p /usr/src/app
