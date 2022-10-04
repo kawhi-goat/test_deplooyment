@@ -1,7 +1,7 @@
 #
 # Build stage
 #
-FROM node:17.1.0-alpine as build
+FROM node:16.17.0-alpine as build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 #ENV REACT_APP_API_URL http://localhost:8080 
