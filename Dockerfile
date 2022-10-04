@@ -5,6 +5,8 @@ FROM node:17.1.0
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
+ENV PATH usr/src/app/node_modules/.bin:$PATH
+
 # Install app dependencies
 COPY package.json /usr/src/app/
 COPY package-lock.json /usr/src/app/
