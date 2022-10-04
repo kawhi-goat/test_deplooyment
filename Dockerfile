@@ -13,6 +13,8 @@ COPY package-lock.json /usr/src/app/
 
 RUN npm install react-scripts
 
+COPY nginx.conf ./
+
 # Bundle app source
 COPY . /usr/src/app
 
