@@ -14,6 +14,8 @@ COPY nginx.conf ./
 
 RUN npm install react-scripts
 
+RUN npm install http-proxy-middlewar
+
 # Bundle app source
 COPY . /usr/src/app
 
