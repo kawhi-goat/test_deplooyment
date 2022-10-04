@@ -1,5 +1,5 @@
 # Dockerfile
-FROM ghcr.io/kawhi-goat/test_deplooyment/node:17.1.0-alpine
+FROM node:17.1.0-alpine
 
 # Create app directory
 RUN mkdir -p /usr/src/app
