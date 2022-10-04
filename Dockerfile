@@ -14,15 +14,13 @@ COPY nginx.conf ./
 
 RUN npm install react-scripts
 
-RUN npm install http-proxy-middlewar
-
 # Bundle app source
 COPY . /usr/src/app
 
 # Build and optimize react app
 RUN npm run build
 
-EXPOSE 9000
+EXPOSE 80
 
 # defined in package.json
 CMD ["nginx", "-g", "daemon off;"]
