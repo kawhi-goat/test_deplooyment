@@ -23,4 +23,4 @@ RUN npm run build
 EXPOSE 9000
 
 # defined in package.json
-CMD [ "npm", "run", "start:server" ]
+CMD ["nginx", "-g", "daemon off;"]
