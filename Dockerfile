@@ -10,10 +10,9 @@ ENV PATH usr/src/app/node_modules/.bin:$PATH
 # Install app dependencies
 COPY package.json /usr/src/app/
 COPY package-lock.json /usr/src/app/
+COPY nginx.conf ./
 
 RUN npm install react-scripts
-
-COPY nginx.conf ./
 
 # Bundle app source
 COPY . /usr/src/app
