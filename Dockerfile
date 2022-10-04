@@ -1,38 +1,25 @@
-#
-# Build stage
-#
-FROM node:16.17.0-alpine as build
-WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
-#ENV REACT_APP_API_URL http://localhost:8080 
-COPY package.json ./
-COPY package-lock.json ./
-COPY nginx.conf ./
-RUN npm ci --silent
-RUN npm install react-scripts@5.0.1 -g --silent
-# CORS
-#RUN npm install http-proxy-middleware
-RUN npm install cors
-COPY . ./
-#RUN sed -i "s|backend_host|$REACT_APP_API_URL|g" -i ./nginx.conf
+FROM node:16.17.0 as builder
+
+# 작업 폴더를 만들고 npm 설치
+RUN mkdir /usr/src/app
+WORKDIR /usr/src/app
+ENV PATH /usr/src/app/node_modules/.bin:$PATH
+COPY package.json /usr/src/app/package.json
+RUN npm install 
+RUN npm install react-scripts@2.1.3 -g
+
+# 소스를 작업폴더로 복사하고 빌드
+COPY . /usr/src/app
 RUN npm run build
 
-#
-# Package stage
-#
-# production environment
-FROM nginx:stable-alpine
+FROM nginx:1.13.9-alpine
+# nginx의 기본 설정을 삭제하고 앱에서 설정한 파일을 복사
+RUN rm -rf /etc/nginx/conf.d
+COPY conf /etc/nginx
 
-ENV TZ Asia/Seoul
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# 위에서 생성한 앱의 빌드산출물을 nginx의 샘플 앱이 사용하던 폴더로 이동
+COPY --from=builder /usr/src/app/build /usr/share/nginx/html
 
-COPY --from=build /app/build /usr/share/nginx/html
-COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
-
-ENV REACT_APP_API_URL http://backend:8080 
-RUN sed -i "s|backend_host|$REACT_APP_API_URL|g" -i /etc/nginx/conf.d/default.conf
-RUN cat /etc/nginx/conf.d/default.conf
-
+# 80포트 오픈하고 nginx 실행
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
